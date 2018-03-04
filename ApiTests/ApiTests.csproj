@@ -65,7 +65,7 @@
     <Compile Include="models\Info.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="tests\SaasTemplateRestApiTest.cs" />
+    <Compile Include="tests\SaasApiTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

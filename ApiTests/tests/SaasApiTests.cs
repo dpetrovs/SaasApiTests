@@ -8,7 +8,7 @@ using System.Net;
 namespace ApiTests.tests
 {
     [TestFixture]
-    public class SaasTemplateRestApiTest : BaseClass
+    public class SaasApiTests : BaseClass
     {
         [Test]
         public void GetApplicationTest()
