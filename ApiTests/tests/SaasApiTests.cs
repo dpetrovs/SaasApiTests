@@ -36,9 +36,9 @@ namespace ApiTests.tests
 
             var getContact = GetContactById(id);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(getContact.Content));
-            AssertFirstName(firstName, GetFirstName(getContact.Content));
-            AssertLastName(lastName, GetLastName(getContact.Content));
-            AssertEmail(email, GetEmail(getContact.Content));
+            Assert.AreEqual(firstName, GetFirstName(getContact.Content));
+            Assert.AreEqual(lastName, GetLastName(getContact.Content));
+            Assert.AreEqual(email, GetEmail(getContact.Content));
         }
 
         [Test]
@@ -50,9 +50,9 @@ namespace ApiTests.tests
 
             var addContact = AddNewContact(firstName, lastName, email);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(addContact.Content));
-            AssertFirstName(firstName, GetFirstName(addContact.Content));
-            AssertLastName(lastName, GetLastName(addContact.Content));
-            AssertEmail(email, GetEmail(addContact.Content));
+            Assert.AreEqual(firstName, GetFirstName(addContact.Content));
+            Assert.AreEqual(lastName, GetLastName(addContact.Content));
+            Assert.AreEqual(email, GetEmail(addContact.Content));
         }
 
         [Test]
@@ -65,9 +65,9 @@ namespace ApiTests.tests
 
             var changeContact = ChangeContact(id, firstName, lastName, email);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(changeContact.Content));
-            AssertFirstName(firstName, GetFirstName(changeContact.Content));
-            AssertLastName(lastName, GetLastName(changeContact.Content));
-            AssertEmail(email, GetEmail(changeContact.Content));
+            Assert.AreEqual(firstName, GetFirstName(changeContact.Content));
+            Assert.AreEqual(lastName, GetLastName(changeContact.Content));
+            Assert.AreEqual(email, GetEmail(changeContact.Content));
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace ApiTests.tests
 
             var editContact = EditContact(id, JsonFirstNameFieldName, firstName);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            AssertFirstName(firstName, GetFirstName(editContact.Content));
+            Assert.AreEqual(firstName, GetFirstName(editContact.Content));
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace ApiTests.tests
 
             var editContact = EditContact(id, JsonLastNameFieldName, lastName);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            AssertLastName(lastName, GetLastName(editContact.Content));
+            Assert.AreEqual(lastName, GetLastName(editContact.Content));
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace ApiTests.tests
 
             var editContact = EditContact(id, JsonEmalilFieldName, email);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            AssertEmail(email, GetEmail(editContact.Content));
+            Assert.AreEqual(email, GetEmail(editContact.Content));
         }
 
         [Test]
@@ -112,8 +112,8 @@ namespace ApiTests.tests
 
             var editContact = EditContact(id, JsonEmalilFieldName, email, JsonFirstNameFieldName, firstName);
             AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            AssertFirstName(firstName, GetFirstName(editContact.Content));
-            AssertEmail(email, GetEmail(editContact.Content));
+            Assert.AreEqual(firstName, GetFirstName(editContact.Content));
+            Assert.AreEqual(email, GetEmail(editContact.Content));
         }
 
         [Test]
