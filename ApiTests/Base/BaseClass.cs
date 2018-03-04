@@ -11,7 +11,7 @@ namespace ApiTests.models
         public const string BaseUrl = "http://159.65.237.98:8182";
         public const string BaseUrlUi = "http://159.65.237.98:80";
         public const string ApplicationUri = "/application.wadl";
-        public const string HealthCheckUri = "/healthcheck/";
+        public const string HealthCheckUri = "/healthcheck";
         public const string ContactsUri = "/api/v1/contacts/";
         public const string ContentType = "Content-type";
         public const string ContentTypeValue = "application/json";
