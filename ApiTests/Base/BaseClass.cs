@@ -8,24 +8,9 @@ namespace ApiTests.models
 {
    public class BaseClass
     {
-        public const string BaseUrl = "http://159.65.237.98:8182";
-        public const string BaseUrlUi = "http://159.65.237.98:80";
-        public const string ApplicationUri = "/application.wadl";
-        public const string HealthCheckUri = "/healthcheck";
-        public const string ContactsUri = "/api/v1/contacts/";
-        public const string ContentType = "Content-type";
-        public const string ContentTypeValue = "application/json";
-        public const string JsonFirstNameFieldName = "firstName";
-        public const string JsonLastNameFieldName = "lastName";
-        public const string JsonEmalilFieldName = "email";
-        public const string ValidationFirstNameString = "firstName {0} does not match {1}";
-        private const string ValidationLastNameString = "lastName {0} does not match {1}";
-        private const string ValidationEmailString = "email {0} does not match {1}";
-        private const string ValidationIdString = "id {0} does not match {1}";
-
         public IRestResponse GetApplication()
         {
-            var client = new RestClient(BaseUrlUi);
+            var client = new RestClient(Properties.Settings.Default.UiUrl);
             var request = new RestRequest(Method.GET);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
@@ -33,15 +18,15 @@ namespace ApiTests.models
 
         public IRestResponse GetHealthCheck()
         {
-            var client = new RestClient(BaseUrl + HealthCheckUri);
-            var request = new RestRequest(Method.GET);
-            IRestResponse<Info> response = client.Execute<Info>(request);
+            var client = new RestClient(Properties.Settings.Default.HealthcheckUrl);
+            var request = new RestRequest(Properties.Settings.Default.HealthcheckUrl, Method.GET);
+            var response = client.Execute(request);
             return response;
         }
 
         public IRestResponse GetContactById(int id)
         {
-            var client = new RestClient(BaseUrl + ContactsUri + id);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.GET);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
@@ -49,9 +34,9 @@ namespace ApiTests.models
 
         public IRestResponse AddNewContact(string firstNameValue, string LastNameValue, string EmailValue)
         {
-            var client = new RestClient(BaseUrl + ContactsUri);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl);
             var request = new RestRequest(Method.POST);
-            request.AddHeader(ContentType, ContentTypeValue);
+            request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
             request.AddJsonBody(new { firstName = firstNameValue, lastName = LastNameValue, email = EmailValue });
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
@@ -59,9 +44,9 @@ namespace ApiTests.models
 
         public IRestResponse ChangeContact(int id, string firstNameValue, string LastNameValue, string EmailValue)
         {
-            var client = new RestClient(BaseUrl + ContactsUri + id);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.PUT);
-            request.AddHeader(ContentType, ContentTypeValue);
+            request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
             request.AddJsonBody(new { firstName = firstNameValue, lastName = LastNameValue, email = EmailValue });
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
@@ -69,20 +54,20 @@ namespace ApiTests.models
 
         public IRestResponse EditContact(int id, string editableField, string value)
         {
-            var client = new RestClient(BaseUrl + ContactsUri + id);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.PATCH);
-            request.AddHeader(ContentType, ContentTypeValue);
-            request.AddParameter(ContentTypeValue, "{\"" + editableField + "\":\"" + value + "\"}", ParameterType.RequestBody);
+            request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
+            request.AddParameter(Properties.Settings.Default.ContentTypeValue, "{\"" + editableField + "\":\"" + value + "\"}", ParameterType.RequestBody);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
 
         public IRestResponse EditContact(int id, string editableField1, string value1, string editableField2, string value2)
         {
-            var client = new RestClient(BaseUrl + ContactsUri + id);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.PATCH);
-            request.AddHeader(ContentType, ContentTypeValue);
-            request.AddParameter(ContentTypeValue, "{\"" + editableField1 + "\":\"" + value1 + "\"" + ",\n" + "\"" + editableField2 + "\":\"" + value2 + "\"}", ParameterType.RequestBody);
+            request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
+            request.AddParameter(Properties.Settings.Default.ContentTypeValue, "{\"" + editableField1 + "\":\"" + value1 + "\"" + ",\n" + "\"" + editableField2 + "\":\"" + value2 + "\"}", ParameterType.RequestBody);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
@@ -90,11 +75,60 @@ namespace ApiTests.models
         public IRestResponse DeleteContact(int id)
         {
             
-            var client = new RestClient(BaseUrl + ContactsUri + id);
+            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.DELETE);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
+
+        public IRestResponse MethodOptionsCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.OPTIONS);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
+        public IRestResponse MethodHeadCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.HEAD);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
+        public IRestResponse MethodPostCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
+        public IRestResponse MethodPutCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.PUT);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
+        public IRestResponse MethodPatchCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.PATCH);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
+        public IRestResponse MethodDeleteCheck(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.DELETE);
+            IRestResponse<Info> response = client.Execute<Info>(request);
+            return response;
+        }
+
 
         public int GetId(string jsonResponse)
         {
@@ -125,27 +159,5 @@ namespace ApiTests.models
             RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(jsonResponse);
             return rootObject.status;
         }
-
-        public void AssertFirstName(string expectedFirstName, string actualFirstName)
-        {
-            Assert.AreEqual(expectedFirstName, actualFirstName, string.Format(ValidationFirstNameString, expectedFirstName, actualFirstName));
-        }
-
-        public void AssertLastName(string expectedLastName, string actualLastName)
-        {
-            Assert.AreEqual(expectedLastName, actualLastName, string.Format(ValidationLastNameString, expectedLastName, actualLastName));
-        }
-
-        public void AssertEmail(string expectedEmail, string actualEmail)
-        {
-            Assert.AreEqual(expectedEmail, actualEmail, string.Format(ValidationEmailString, expectedEmail, actualEmail));
-        }
-
-        public void AssertStatusCode(HttpStatusCode expectedStatusCode, int actualStatusCode)
-        {
-            Assert.AreEqual((int)expectedStatusCode, actualStatusCode, string.Format(ValidationIdString, (int)expectedStatusCode, actualStatusCode));
-        }
-
-
     }
 }

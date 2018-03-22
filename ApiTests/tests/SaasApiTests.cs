@@ -1,5 +1,6 @@
 ﻿using ApiTests.models;
 using Newtonsoft.Json;
+using NUnit.Allure.Attributes;
 using NUnit.Framework;
 using RestSharp;
 using System;
@@ -10,147 +11,319 @@ namespace ApiTests.tests
     [TestFixture]
     public class SaasApiTests : BaseClass
     {
-        [Test]
-        public void GetApplicationTest()
+        string firstName, lastName, email, firstNameForEdit, lastNameForEdit, emailForEdit;
+        int id;
+        IRestResponse createdContactResponse;
+
+        [OneTimeSetUp]
+        public void SetUpForEdit()
         {
-            var getApplication = GetApplication();
-            Assert.IsTrue(getApplication.Content.Contains("Software Engineering Course"));
-            AssertStatusCode(HttpStatusCode.OK, (int)getApplication.StatusCode);
+            firstNameForEdit = Faker.Name.First();
+            lastNameForEdit = Faker.Name.Last();
+            emailForEdit = Faker.Internet.Email(firstNameForEdit + " " + lastNameForEdit);
         }
 
-        [Test]
-        public void HealthCheckTest()
+        [SetUp]
+        public void BaseSetUp()
         {
-            var healthCheck = GetHealthCheck();
-            AssertStatusCode(HttpStatusCode.OK, (int)healthCheck.StatusCode);
-            Assert.IsTrue(healthCheck.Content.Contains("live"));
+            firstName = Faker.Name.First();
+            lastName = Faker.Name.Last();
+            email = Faker.Internet.Email(firstName + " " + lastName);
+            createdContactResponse = AddNewContact(firstName, lastName, email);
+            id = GetId(createdContactResponse.Content);
         }
 
-        [Test]
+        [TearDown]
+        public void BaseTearDown()
+        {
+            DeleteContact(id);
+        }
+
+        [Test, Category("Positive: Get Contact")]
         public void GetContactByIdTest()
         {
-            string firstName = "John";
-            string lastName = "Doe";
-            string email = "john.doe@unknown.com";
-            int id = 1;
-
             var getContact = GetContactById(id);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(getContact.Content));
+            Assert.AreEqual(HttpStatusCode.OK, getContact.StatusCode);
             Assert.AreEqual(firstName, GetFirstName(getContact.Content));
             Assert.AreEqual(lastName, GetLastName(getContact.Content));
             Assert.AreEqual(email, GetEmail(getContact.Content));
         }
 
-        [Test]
-        public void AddNewContactTest()
-        {
-            string firstName = "Hulk";
-            string lastName = "Hogan";
-            string email = "hulkHogan@testmail.com";
-
-            var addContact = AddNewContact(firstName, lastName, email);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(addContact.Content));
-            Assert.AreEqual(firstName, GetFirstName(addContact.Content));
-            Assert.AreEqual(lastName, GetLastName(addContact.Content));
-            Assert.AreEqual(email, GetEmail(addContact.Content));
-        }
-
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void ChangeContactTest()
         {
-            string firstName = "HulkChanged";
-            string lastName = "HogaChanged1";
-            string email = "hulkHoganChanged@testmail.com";
-            int id = 13;
-
             var changeContact = ChangeContact(id, firstName, lastName, email);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(changeContact.Content));
+            Assert.AreEqual(HttpStatusCode.OK, changeContact.StatusCode);
             Assert.AreEqual(firstName, GetFirstName(changeContact.Content));
             Assert.AreEqual(lastName, GetLastName(changeContact.Content));
             Assert.AreEqual(email, GetEmail(changeContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactFirstNameTest()
         {
-            string firstName = "HulkEdited";
-            int id = 13;
-
-            var editContact = EditContact(id, JsonFirstNameFieldName, firstName);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(firstName, GetFirstName(editContact.Content));
+            var editContact = EditContact(id, Properties.Settings.Default.JsonFirstNameFieldName, firstNameForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(firstNameForEdit, GetFirstName(editContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactLastNameTest()
         {
-            string lastName = "HoganEdited";
-            int id = 13;
-
-            var editContact = EditContact(id, JsonLastNameFieldName, lastName);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(lastName, GetLastName(editContact.Content));
+            var editContact = EditContact(id, Properties.Settings.Default.JsonLastNameFieldName, lastNameForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(lastNameForEdit, GetLastName(editContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactEmailTest()
         {
-            string email = "hulkhogan_edited@testmail.com";
-            int id = 13;
-
-            var editContact = EditContact(id, JsonEmalilFieldName, email);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(email, GetEmail(editContact.Content));
+            var editContact = EditContact(id, Properties.Settings.Default.JsonEmalilFieldName, emailForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(emailForEdit, GetEmail(editContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactFirstNameEmailTest()
         {
-            string firstName = "Sandra";
-            string email = "sandrabullock@testmail.com";
-            int id = 13;
-
-            var editContact = EditContact(id, JsonEmalilFieldName, email, JsonFirstNameFieldName, firstName);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(firstName, GetFirstName(editContact.Content));
-            Assert.AreEqual(email, GetEmail(editContact.Content));
+            var editContact = EditContact(id, Properties.Settings.Default.JsonEmalilFieldName, emailForEdit, Properties.Settings.Default.JsonFirstNameFieldName, firstNameForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(firstNameForEdit, GetFirstName(editContact.Content));
+            Assert.AreEqual(emailForEdit, GetEmail(editContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactLastNameEmailTest()
         {
-            string lastName = "Tarantino";
-            string email = "quentintarantino@testmail.com";
-            int id = 13;
-
-            var editContact = EditContact(id, JsonEmalilFieldName, email, JsonLastNameFieldName, lastName);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(lastName, GetLastName(editContact.Content));
-            Assert.AreEqual(email, GetEmail(editContact.Content));
+            var editContact = EditContact(id, Properties.Settings.Default.JsonEmalilFieldName, emailForEdit, Properties.Settings.Default.JsonLastNameFieldName, lastNameForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(lastNameForEdit, GetLastName(editContact.Content));
+            Assert.AreEqual(emailForEdit, GetEmail(editContact.Content));
         }
 
-        [Test]
+        [Test, Category("Positive: Edit Contact")]
         public void EditContactFirstLastNameTest()
         {
-            string firstName = "Luciano";
-            string lastName = "Pavarotti";
-            int id = 13;
+            var editContact = EditContact(id, Properties.Settings.Default.JsonFirstNameFieldName, firstNameForEdit, Properties.Settings.Default.JsonLastNameFieldName, lastNameForEdit);
+            Assert.AreEqual(HttpStatusCode.OK, editContact.StatusCode);
+            Assert.AreEqual(firstNameForEdit, GetFirstName(editContact.Content));
+            Assert.AreEqual(lastNameForEdit, GetLastName(editContact.Content));
+        }
 
-            var editContact = EditContact(id, JsonFirstNameFieldName, firstName, JsonLastNameFieldName, lastName);
-            AssertStatusCode(HttpStatusCode.OK, GetStatusCodeFromResponseBody(editContact.Content));
-            Assert.AreEqual(firstName, GetFirstName(editContact.Content));
-            Assert.AreEqual(lastName, GetLastName(editContact.Content));
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostFirstNameOnlyTest()
+        {
+            var postContact = ChangeContact(id, firstName, null, null);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
+        }
+
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostLastNameOnlyTest()
+        {
+            var postContact = ChangeContact(id, null, lastName, null);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
+        }
+
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostEmailOnlyTest()
+        {
+            var postContact = ChangeContact(id, null, null, email);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
+        }
+
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostFirstLastNameOnlyTest()
+        {
+            var postContact = ChangeContact(id, firstName, lastName, null);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
+        }
+
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostFirstNameEmailOnlyTest()
+        {
+            var postContact = ChangeContact(id, firstName, null, email);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
+        }
+
+        [Test, Category("Negative: POST not all parameters")]
+        public void PostLastNameEmailOnlyTest()
+        {
+            var postContact = ChangeContact(id, null, lastName, email);
+            Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
         }
 
         [Test]
+        [Category("Positive: DeleteContact")]
         public void DeleteContactTest()
         {
-            int id = 22;
-
-            var deleteContact = DeleteContact(id);
+            var addContact = AddNewContact(firstNameForEdit, lastNameForEdit, emailForEdit);
+            var addedContactId = GetId(addContact.Content);
+            var deleteContact = DeleteContact(addedContactId);
             Assert.AreEqual(HttpStatusCode.OK, deleteContact.StatusCode);
-            var getDeletedContact = GetContactById(id);
+            var getDeletedContact = GetContactById(addedContactId);
             Assert.AreEqual(HttpStatusCode.NotFound, getDeletedContact.StatusCode);
+        }
+    }
+
+    [TestFixture]
+    public class SaasApiTestsMethods : BaseClass
+    {
+        [Test, Category("Positive: HealthCheck")]
+        public void HealthCheckTest()
+        {
+            var healthCheck = GetHealthCheck();
+            Assert.AreEqual(HttpStatusCode.OK, healthCheck.StatusCode);
+            Assert.IsTrue(healthCheck.Content.Contains("live"));
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void GetApplicationTest()
+        {
+            var getApplication = GetApplication();
+            Assert.IsTrue(getApplication.Content.Contains("Software Engineering Course"));
+            Assert.AreEqual(HttpStatusCode.OK, getApplication.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationOptionsTest()
+        {
+            var getOptions = MethodOptionsCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationHeadTest()
+        {
+            var getOptions = MethodHeadCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationPostTest()
+        {
+            var getOptions = MethodPostCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationPutTest()
+        {
+            var getOptions = MethodPutCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationPatchTest()
+        {
+            var getOptions = MethodPatchCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ApplicationDeleteTest()
+        {
+            var getOptions = MethodDeleteCheck(Properties.Settings.Default.ApplicationUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckOptionsTest()
+        {
+            var getOptions = MethodOptionsCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckHeadTest()
+        {
+            var getOptions = MethodHeadCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckPostTest()
+        {
+            var getOptions = MethodPostCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckPutTest()
+        {
+            var getOptions = MethodPutCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckPatchTest()
+        {
+            var getOptions = MethodPatchCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void HealthCheckDeleteTest()
+        {
+            var getOptions = MethodDeleteCheck(Properties.Settings.Default.HealthcheckUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsOptionsTest()
+        {
+            var getOptions = MethodOptionsCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsHeadTest()
+        {
+            var getOptions = MethodHeadCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsPostTest()
+        {
+            var getOptions = MethodPostCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsPutTest()
+        {
+            var getOptions = MethodPutCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsPatchTest()
+        {
+            var getOptions = MethodPatchCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsDeleteTest()
+        {
+            var getOptions = MethodDeleteCheck(Properties.Settings.Default.ContactsUrl);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsByIdOptionsTest()
+        {
+            int id = 1;
+            var getOptions = MethodOptionsCheck(Properties.Settings.Default.ContactsUrl + id);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
+        }
+
+        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        public void ContactsByIdHeadTest()
+        {
+            int id = 1;
+            var getOptions = MethodHeadCheck(Properties.Settings.Default.ContactsUrl + id);
+            Assert.AreEqual(HttpStatusCode.MethodNotAllowed, getOptions.StatusCode);
         }
     }
 }

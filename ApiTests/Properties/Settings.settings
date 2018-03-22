@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ApiTests.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ApplicationUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://159.65.237.98:8182/application.wadl</Value>
+    </Setting>
+    <Setting Name="HealthcheckUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://159.65.237.98:8182/healthcheck</Value>
+    </Setting>
+    <Setting Name="ContactsUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://159.65.237.98:8182/api/v1/contacts/</Value>
+    </Setting>
+    <Setting Name="ContentType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Content-type</Value>
+    </Setting>
+    <Setting Name="ContentTypeValue" Type="System.String" Scope="User">
+      <Value Profile="(Default)">application/json</Value>
+    </Setting>
+    <Setting Name="JsonFirstNameFieldName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">firstName</Value>
+    </Setting>
+    <Setting Name="JsonLastNameFieldName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">lastName</Value>
+    </Setting>
+    <Setting Name="JsonEmalilFieldName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">email</Value>
+    </Setting>
+    <Setting Name="UiUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://159.65.237.98:80</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

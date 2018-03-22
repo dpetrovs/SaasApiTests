@@ -1,0 +1,57 @@
+{
+  "uuid": "1-1003",
+  "fullName": "ApiTests.tests.SaasApiTests.GetContactByIdTest",
+  "labels": [
+    {
+      "name": "suite",
+      "value": "ApiTests.tests.SaasApiTests"
+    },
+    {
+      "name": "thread",
+      "value": "NonParallelWorker"
+    },
+    {
+      "name": "host",
+      "value": "UKRPC029"
+    },
+    {
+      "name": "testClass",
+      "value": "ApiTests.tests.SaasApiTests"
+    },
+    {
+      "name": "testMethod",
+      "value": "GetContactByIdTest"
+    },
+    {
+      "name": "package",
+      "value": "ApiTests.tests.SaasApiTests"
+    },
+    {
+      "name": "tag",
+      "value": "NUnit"
+    },
+    {
+      "name": "tag",
+      "value": "Debug"
+    },
+    {
+      "name": "feature",
+      "value": "Core"
+    }
+  ],
+  "links": [],
+  "name": "GetContactByIdTest",
+  "status": "passed",
+  "statusDetails": {
+    "known": false,
+    "muted": false,
+    "flaky": false
+  },
+  "stage": "finished",
+  "description": "I'm a test",
+  "steps": [],
+  "attachments": [],
+  "parameters": [],
+  "start": 1520893816964,
+  "stop": 1520893817195
+}
