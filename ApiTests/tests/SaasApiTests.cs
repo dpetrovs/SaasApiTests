@@ -171,12 +171,13 @@ namespace ApiTests.tests
         [Test, Category("Positive: HealthCheck")]
         public void HealthCheckTest()
         {
+
             var healthCheck = GetHealthCheck();
             Assert.AreEqual(HttpStatusCode.OK, healthCheck.StatusCode);
             Assert.IsTrue(healthCheck.Content.Contains("live"));
         }
 
-        [Test, Category("Negative: Not Allowed Http Methods Check")]
+        [Test, Category("Positive: Get application")]
         public void GetApplicationTest()
         {
             var getApplication = GetApplication();

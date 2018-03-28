@@ -19,7 +19,8 @@ namespace ApiTests.models
         public IRestResponse GetHealthCheck()
         {
             var client = new RestClient(Properties.Settings.Default.HealthcheckUrl);
-            var request = new RestRequest(Properties.Settings.Default.HealthcheckUrl, Method.GET);
+            var request = new RestRequest( Method.GET);
+            request.AddHeader("Accept", "*/*");
             var response = client.Execute(request);
             return response;
         }
