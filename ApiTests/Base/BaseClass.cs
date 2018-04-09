@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
 using RestSharp;
+using System.Collections;
 using System.Net;
 
 namespace ApiTests.models
@@ -33,42 +34,32 @@ namespace ApiTests.models
             return response;
         }
 
-        public IRestResponse AddNewContact(string firstNameValue, string LastNameValue, string EmailValue)
+        public IRestResponse AddNewContact(string json)
         {
             var client = new RestClient(Properties.Settings.Default.ContactsUrl);
             var request = new RestRequest(Method.POST);
             request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
-            request.AddJsonBody(new { firstName = firstNameValue, lastName = LastNameValue, email = EmailValue });
+            request.AddParameter(Properties.Settings.Default.ContentTypeValue, json, ParameterType.RequestBody);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
 
-        public IRestResponse ChangeContact(int id, string firstNameValue, string LastNameValue, string EmailValue)
+        public IRestResponse ChangeContact(int id, string json)
         {
             var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.PUT);
             request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
-            request.AddJsonBody(new { firstName = firstNameValue, lastName = LastNameValue, email = EmailValue });
+            request.AddParameter(Properties.Settings.Default.ContentTypeValue, json, ParameterType.RequestBody);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
 
-        public IRestResponse EditContact(int id, string editableField, string value)
+        public IRestResponse EditContact(int id, string json)
         {
             var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
             var request = new RestRequest(Method.PATCH);
             request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
-            request.AddParameter(Properties.Settings.Default.ContentTypeValue, "{\"" + editableField + "\":\"" + value + "\"}", ParameterType.RequestBody);
-            IRestResponse<Info> response = client.Execute<Info>(request);
-            return response;
-        }
-
-        public IRestResponse EditContact(int id, string editableField1, string value1, string editableField2, string value2)
-        {
-            var client = new RestClient(Properties.Settings.Default.ContactsUrl + id);
-            var request = new RestRequest(Method.PATCH);
-            request.AddHeader(Properties.Settings.Default.ContentType, Properties.Settings.Default.ContentTypeValue);
-            request.AddParameter(Properties.Settings.Default.ContentTypeValue, "{\"" + editableField1 + "\":\"" + value1 + "\"" + ",\n" + "\"" + editableField2 + "\":\"" + value2 + "\"}", ParameterType.RequestBody);
+            request.AddParameter(Properties.Settings.Default.ContentTypeValue, json, ParameterType.RequestBody);
             IRestResponse<Info> response = client.Execute<Info>(request);
             return response;
         }
