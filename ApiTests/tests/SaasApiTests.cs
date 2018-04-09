@@ -195,17 +195,21 @@ namespace ApiTests.tests
             Assert.AreEqual(HttpStatusCode.BadRequest, postContact.StatusCode);
         }
 
-    //    [Test]
-    //    [Category("Positive: DeleteContact")]
-    //    public void DeleteContactTest()
-    //    {
-    //        var addContact = AddNewContact(firstNameForEdit, lastNameForEdit, emailForEdit);
-    //        var addedContactId = GetId(addContact.Content);
-    //        var deleteContact = DeleteContact(addedContactId);
-    //        Assert.AreEqual(HttpStatusCode.OK, deleteContact.StatusCode);
-    //        var getDeletedContact = GetContactById(addedContactId);
-    //        Assert.AreEqual(HttpStatusCode.NotFound, getDeletedContact.StatusCode);
-    //    }
+        [Test]
+        [Category("Positive: DeleteContact")]
+        public void DeleteContactTest()
+        {
+            dictionaryForEdit.Add("firstName", firstNameForEdit);
+            dictionaryForEdit.Add("lastName", lastNameForEdit);
+            dictionaryForEdit.Add("email", emailForEdit);
+            json = JsonGenerator.JsonRequest(dictionaryForEdit);
+            var addContact = AddNewContact(json);
+            var addedContactId = GetId(addContact.Content);
+            var deleteContact = DeleteContact(addedContactId);
+            Assert.AreEqual(HttpStatusCode.OK, deleteContact.StatusCode);
+            var getDeletedContact = GetContactById(addedContactId);
+            Assert.AreEqual(HttpStatusCode.NotFound, getDeletedContact.StatusCode);
+        }
     }
 
     [TestFixture]
